@@ -1,10 +1,16 @@
-import { addDoc, collection, where, query, limit, orderBy, updateDoc} from "firebase/firestore";
+import { addDoc, collection, where, query, limit, orderBy, updateDoc,doc, getDoc,deleteDoc} from "firebase/firestore";
+import { ref  as storageRef,deleteObject } from "firebase/storage";
 import { defineStore } from "pinia";
-import { computed } from "vue";
-import { useFirestore,useCollection } from "vuefire";
+import { computed,ref,watch  } from "vue";
+import { useFirestore,useCollection, useFirebaseStorage } from "vuefire";
 export const useProductsStore =  defineStore("products",()=>{
-    
+   
     const db = useFirestore();
+    const storage = useFirebaseStorage();
+
+    const selectCategory = ref(1);
+
+   
     const categories = [
       {
         id: 1,
@@ -48,6 +54,22 @@ export const useProductsStore =  defineStore("products",()=>{
 
     }
 
+
+    async function deleteProduct(productId,productImage){
+      if(confirm("Eliminar Producto?")){
+         const docRef = doc(db,"products",productId);
+         const docSnap = await getDoc(docRef);
+         const {image} =  docSnap.data();
+         const imageRef = storageRef(storage,image);
+
+
+         await Promise.all([
+             deleteDoc(docRef),
+             deleteObject(imageRef)
+         ])
+      }
+    }
+
     const categoriesOptions = computed(()=>{
         const options = [
             {label: 'Seleccione',value: '',attrs:{disabled: true}},
@@ -65,13 +87,24 @@ export const useProductsStore =  defineStore("products",()=>{
 
 
 
+    
+     
+
     const noResults = computed(()=>  productsCollection.value.length === 0);
 
+
+    const filterProducts = computed(()=>{
+       return productsCollection.value.filter(product=> product.category === selectCategory.value)
+    });
     return{
         categoriesOptions,
        createProduct,
        productsCollection,
        updateProduct,
-       noResults
+       deleteProduct,
+       noResults,
+       filterProducts,
+       categories,
+       selectCategory
     }
 });

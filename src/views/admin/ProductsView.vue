@@ -1,12 +1,9 @@
 
 <script setup>
- import Link from "../../components/Link.vue"
+import Link from "../../components/Link.vue"
 import Product from "../../components/Product.vue";
- import {useProductsStore} from "../../stores/products"
- const productsStore = useProductsStore();
-
-
-    
+import {useProductsStore} from "../../stores/products"
+const productsStore = useProductsStore();
 
 </script>
 
