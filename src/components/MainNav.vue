@@ -55,7 +55,7 @@ const products = useProductsStore();
             </div>
         </div>
               <nav>
-                        <Link  to="admi">
+                        <Link  to="sales">
                           Administrar
                         </Link>
               </nav>

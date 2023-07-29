@@ -1,20 +1,30 @@
 <script setup>
+import {computed} from "vue"
 import { RouterLink } from "vue-router"
 import {formatCurrency} from "../helpers/helpers"
 import {useProductsStore} from "../stores/products"
 const productStore = useProductsStore();
 
 
-defineProps({
+const props = defineProps({
          product: {
             type: Object,
             required: true
          }
     })
+
+
+const isProductNotavailable = computed(()=>{
+    return props.product.availability   === 0
+})
+
+
 </script>
 
 <template>
-    <li  class="flex items-center space-x-6 border border-gray-200 p-6 bg-white shadow">
+    <li  
+    :class="{'opacity-30':isProductNotavailable}"
+    class="flex items-center space-x-6 border border-gray-200 p-6 bg-white shadow">
         <img 
         :src="product.image" 
         :alt="product.name"

@@ -3,8 +3,13 @@ import { formatCurrency } from "../helpers/helpers";
 import { useCart } from "../stores/cart";
 import Amount from "./Amount.vue";
 import ShoppingCartItem from "./ShoppingCartItem.vue";
+import CuponForm from "./CuponForm.vue";
+import { useCouponStore } from "../stores/coupons";
 
     const cart = useCart();
+    const coupon = useCouponStore();
+
+    console.log(cart.items);
 </script>
 
 <template>
@@ -41,15 +46,31 @@ import ShoppingCartItem from "./ShoppingCartItem.vue";
                  <template #label>
                      Impuestos:
                  </template>
-                 {{ formatCurrency(100) }}
+                 {{ formatCurrency(cart.taxes) }}
+              </Amount>
+              <Amount v-if="coupon.isValidateCupon" >
+                 <template #label>
+                     Descuento:
+                 </template>
+                 {{ formatCurrency(coupon.discount) }}
               </Amount>
               <Amount>
                  <template #label>
                      Total a pagar:
                  </template>
-                 {{ formatCurrency(400) }}
+                 {{ formatCurrency(cart.total) }}
               </Amount>
           </dl>
+
+
+          <CuponForm  v-if="!coupon.isValidateCupon"/>
+
+          <button 
+          type="button"
+          class="mt-10 w-full bg-indigo-600 hover:bg-indigo-700 text-white uppercase font-bold p-3 " 
+          @click="cart.checkout()">
+             Confirmar Compra
+          </button>
     </div>
 </template>
 
